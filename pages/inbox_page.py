@@ -42,3 +42,9 @@ class InboxPage:
     def should_be_displayed(self):
         self._compose_button().wait_for(state="visible", timeout=20000)
         self._page.wait_for_url("**/mail/**", timeout=20000)
+
+    def should_receive_email_with_subject(self, subject: str):
+        # Inbox email list items are div[role='option'] whose aria-label contains the subject.
+        # Outlook delivers self-sent emails within seconds — allow up to 60s for propagation.
+        email_item = self._page.locator(f"div[role='option'][aria-label*='{subject}']").first
+        email_item.wait_for(state="visible", timeout=60000)

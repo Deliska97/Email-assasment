@@ -16,6 +16,7 @@ Feature: Send email with attachment via Outlook
     And the user attaches the file "test_attachment.txt"
     And the user sends the email
     Then the email should be sent successfully
+    And the inbox should receive an email with subject "Test Automation Task"
 
     When the user logs out
     Then the login page should be displayed

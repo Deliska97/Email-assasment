@@ -73,6 +73,11 @@ def email_should_be_sent(compose_page: ComposePage):
     compose_page.should_be_sent_successfully()
 
 
+@then(parsers.parse('the inbox should receive an email with subject "{subject}"'))
+def inbox_should_receive_email(inbox_page: InboxPage, subject: str):
+    inbox_page.should_receive_email_with_subject(subject)
+
+
 @then("the login page should be displayed")
 def login_page_should_be_displayed(login_page: LoginPage):
     login_page.should_be_displayed()
