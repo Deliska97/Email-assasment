@@ -1,0 +1,9 @@
+.env
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+htmlcov/
+.coverage
+playwright-report/
+test-results/
