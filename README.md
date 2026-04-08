@@ -37,7 +37,7 @@ ACCOUNT_NAME=Your Display Name
 
 > **Note:** The account must have a contact named `"Test"` saved in Outlook contacts pointing to a valid email address. The test sends the email to that contact and verifies it arrives in the inbox.
 
-> **Security note:** Credentials are stored in `.env` (gitignored) and loaded at runtime. This is intentional for this dedicated test account. In a real CI/CD pipeline, credentials would be injected via secure secret management (e.g. GitHub Actions secrets, HashiCorp Vault) — never committed to version control.
+> **Known issue — credentials in `.env`:** This project uses a dedicated test account created solely for this assessment. Credentials are stored in `.env` (gitignored) as a pragmatic shortcut for a throwaway account. In production, credentials would never live in a file on disk — they would be injected at runtime via secure secret management (e.g. GitHub Actions secrets, HashiCorp Vault). This trade-off is intentional and acceptable only because the account has no real data and exists exclusively for automated testing.
 
 ### 3. Test attachment
 
