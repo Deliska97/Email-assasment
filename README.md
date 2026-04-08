@@ -7,12 +7,26 @@ Built with **Playwright + Pytest-BDD (Python)**.
 
 ---
 
+## Quick start for reviewers
+
+Credentials for the dedicated test account are committed in `.env` — no setup required. Just install and run:
+
+```bash
+pip install -r requirements.txt
+playwright install chromium
+py -m pytest -v
+```
+
+> **Note on committed credentials:** Storing credentials in version control is a known bad practice. This is a deliberate exception: the account (`adam.testAut123@outlook.com`) is a throwaway account created exclusively for this assessment with no real data. In any real project, credentials would be injected via secure secret management (e.g. GitHub Actions secrets, HashiCorp Vault) and never committed.
+
+---
+
 ## Requirements
 
 - Python 3.10+
 - pip
 
-## Setup
+## Setup (for running with a different account)
 
 ### 1. Install dependencies
 
@@ -23,10 +37,6 @@ playwright install chromium
 
 ### 2. Configure credentials
 
-```bash
-cp .env.example .env
-```
-
 Edit `.env` with your Outlook account details:
 
 ```
@@ -35,9 +45,7 @@ PASSWORD=your_password
 ACCOUNT_NAME=Your Display Name
 ```
 
-> **Note:** The account must have a contact named `"Test"` saved in Outlook contacts pointing to a valid email address. The test sends the email to that contact and verifies it arrives in the inbox.
-
-> **Known issue — credentials in `.env`:** This project uses a dedicated test account created solely for this assessment. Credentials are stored in `.env` (gitignored) as a pragmatic shortcut for a throwaway account. In production, credentials would never live in a file on disk — they would be injected at runtime via secure secret management (e.g. GitHub Actions secrets, HashiCorp Vault). This trade-off is intentional and acceptable only because the account has no real data and exists exclusively for automated testing.
+> **Note:** The account must have a contact named `"Test"` saved in Outlook contacts. The test sends the email to that contact and verifies it arrives in the inbox.
 
 ### 3. Test attachment
 
@@ -69,7 +77,8 @@ HEADLESS=true py -m pytest -v
 ├── pages/
 │   ├── login_page.py                        # Page Object: login flow
 │   ├── inbox_page.py                        # Page Object: inbox, compose trigger, logout
-│   └── compose_page.py                      # Page Object: compose dialog
+│   ├── compose_page.py                      # Page Object: compose dialog
+│   └── timeouts.py                          # Named timeout constants
 ├── steps/
 │   └── test_send_email.py                   # Gherkin step definitions
 ├── test_data/
@@ -77,7 +86,8 @@ HEADLESS=true py -m pytest -v
 ├── conftest.py                              # Playwright fixtures + .env loading
 ├── pytest.ini                               # Pytest + BDD configuration
 ├── requirements.txt                         # Python dependencies
-└── .env.example                             # Credentials template
+├── .env                                     # Test account credentials (committed intentionally — see note above)
+└── .env.example                             # Credentials template for custom accounts
 ```
 
 ---
