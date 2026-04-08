@@ -1,7 +1,7 @@
 # Outlook Email Automation — Block Level 3
 
 Automated test for the full email flow in Outlook Web (outlook.live.com):
-**Login → Compose → Add recipient from contacts → Attach file → Send → Logout**
+**Login → Compose → Add recipient from contacts → Attach file → Send → Verify delivery → Logout**
 
 Built with **Playwright + Pytest-BDD (Python)**.
 
@@ -27,35 +27,36 @@ playwright install chromium
 cp .env.example .env
 ```
 
-Edit `.env` and fill in your Outlook credentials:
+Edit `.env` with your Outlook account details:
 
 ```
 EMAIL=your_email@outlook.com
 PASSWORD=your_password
+ACCOUNT_NAME=Your Display Name
 ```
 
-> **Note:** The account must have at least one saved contact pointing to a valid email address. The test uses the contact named `"Test"`.
+> **Note:** The account must have a contact named `"Test"` saved in Outlook contacts pointing to a valid email address. The test sends the email to that contact and verifies it arrives in the inbox.
 
-### 3. Prepare test attachment
+> **Security note:** Credentials are stored in `.env` (gitignored) and loaded at runtime. This is intentional for this dedicated test account. In a real CI/CD pipeline, credentials would be injected via secure secret management (e.g. GitHub Actions secrets, HashiCorp Vault) — never committed to version control.
 
-The file `test_data/test_attachment.txt` is already included. It is attached to the email during the test.
+### 3. Test attachment
+
+`test_data/test_attachment.txt` is already included and will be attached during the test.
 
 ---
 
 ## Running the tests
 
-### Headed (visible browser — recommended for demos)
+### Headed (visible browser — default)
 
 ```bash
-py -m pytest steps/test_send_email.py -v
+py -m pytest -v
 ```
 
 ### Headless
 
-Edit `steps/conftest.py` and change `headless=False` to `headless=True`, then run:
-
 ```bash
-py -m pytest steps/test_send_email.py -v
+HEADLESS=true py -m pytest -v
 ```
 
 ---
@@ -66,17 +67,17 @@ py -m pytest steps/test_send_email.py -v
 ├── features/
 │   └── send_email_with_attachment.feature   # Gherkin scenario (Block 3)
 ├── pages/
-│   ├── login_page.py                        # Login flow page object
-│   ├── inbox_page.py                        # Inbox actions (compose, logout)
-│   └── compose_page.py                      # Compose dialog (To, Subject, Body, Attach, Send)
+│   ├── login_page.py                        # Page Object: login flow
+│   ├── inbox_page.py                        # Page Object: inbox, compose trigger, logout
+│   └── compose_page.py                      # Page Object: compose dialog
 ├── steps/
-│   ├── conftest.py                          # Playwright browser/page fixtures
 │   └── test_send_email.py                   # Gherkin step definitions
 ├── test_data/
 │   └── test_attachment.txt                  # File attached during the test
-├── conftest.py                              # Root conftest — loads .env
+├── conftest.py                              # Playwright fixtures + .env loading
 ├── pytest.ini                               # Pytest + BDD configuration
-└── requirements.txt                         # Python dependencies
+├── requirements.txt                         # Python dependencies
+└── .env.example                             # Credentials template
 ```
 
 ---
@@ -96,6 +97,7 @@ Scenario: Send an email with attachment to a saved contact and logout
   And the user attaches the file "test_attachment.txt"
   And the user sends the email
   Then the email should be sent successfully
+  And the inbox should receive an email with subject "Test Automation Task"
 
   When the user logs out
   Then the login page should be displayed
